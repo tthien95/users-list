@@ -3,20 +3,20 @@ import React from 'react';
 export default function TableEntries({ usersData }) {
   return usersData.map((user) => (
     <tr key={user.id}>
-      <th scope="row">{user.id}</th>
-      <td>
-        <div style={{ maxWidth: '30%' }}>
-          <img
-            className="rounded-circle img-fluid"
-            src={user.avatar}
-            alt={user.avatar}
-          />
-        </div>
+      <th scope="row" className="align-middle">
+        {user.id}
+      </th>
+      <td className="align-middle">
+        <img
+          className="rounded-circle w-25"
+          src={user.image}
+          alt={user.image}
+        />
       </td>
-      <td>{user.email}</td>
-      <td>{user.first_name}</td>
-      <td>{user.last_name}</td>
-      <td>
+      <td className="align-middle">{user.email}</td>
+      <td className="align-middle">{user.firstName}</td>
+      <td className="align-middle">{user.lastName}</td>
+      <td className="align-middle">
         <button>Edit</button>
       </td>
     </tr>

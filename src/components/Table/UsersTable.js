@@ -11,7 +11,7 @@ export default function UsersTable() {
 
     get('/users')
       .then((res) => {
-        const usersList = res.data.data;
+        const usersList = res.data.users;
 
         setUsersList(usersList);
       })
@@ -43,7 +43,7 @@ export default function UsersTable() {
   }
 
   return (
-    <div className="container-md">
+    <div className="container-md mt-3">
       <table className="table table-hover">
         <thead>
           <tr>

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'https://reqres.in/api';
+const baseUrl = 'https://dummyjson.com';
 
 export const get = (url) => {
   return axios.get(baseUrl + url);
