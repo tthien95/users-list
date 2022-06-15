@@ -4,38 +4,59 @@ import TableEntries from './TableEntries';
 
 export default function UsersTable() {
   const [usersList, setUsersList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    get('https://reqres.in/api/users').then((res) => {
-      const usersList = res.data.data;
+    setIsLoading(true);
 
-      setUsersList(usersList);
-    });
+    get('/users')
+      .then((res) => {
+        const usersList = res.data.data;
+
+        setUsersList(usersList);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
-  return (
-    <table className='table'>
-      <thead>
-        <tr>
-          <th scope='col'>#</th >
-          <th scope='col'>Avatar</th >
-          <th scope='col'>Email</th >
-          <th scope='col'>Last Name</th >
-          <th scope='col'>First Name</th >
-          <th scope='col'>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        {usersList.length === 0 ? (
-          <tr>
-            <td>
-              <p>No Data</p>
-            </td>
-          </tr>
+  let content = (
+    <tr>
+      <td colSpan="6" className="text-center">
+        {isLoading ? (
+          <div
+            className="spinner-border"
+            style={{ textAlign: 'center' }}
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
         ) : (
-          <TableEntries usersData={usersList} />
+          <p className="text-center">No Data</p>
         )}
-      </tbody>
-    </table>
+      </td>
+    </tr>
+  );
+
+  if (usersList.length > 0) {
+    content = <TableEntries usersData={usersList} />;
+  }
+
+  return (
+    <div className="container-md">
+      <table className="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Avatar</th>
+            <th scope="col">Email</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>{content}</tbody>
+      </table>
+    </div>
   );
 }
