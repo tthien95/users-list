@@ -9,8 +9,9 @@ function App() {
     <>
       <Navigation />
       <Routes>
-        <Route path='/' element={<UsersTable />}/>
-        <Route path='new-user' element={<UserForm/>}/>
+        <Route path='/' element={<UsersTable />} exact/>
+        <Route path='new-user' element={<UserForm/>} exact/>
+        <Route path='user/:userId' element={<UserForm/>} exact/>
       </Routes>
     </>
   );
