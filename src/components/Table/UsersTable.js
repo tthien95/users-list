@@ -22,7 +22,7 @@ export default function UsersTable() {
 
   let content = (
     <tr>
-      <td colSpan="6" className="text-center">
+      <td colSpan="8" className="text-center">
         {isLoading ? (
           <div
             className="spinner-border"
@@ -49,6 +49,8 @@ export default function UsersTable() {
           <tr>
             <th scope="col">#</th>
             <th scope="col">Avatar</th>
+            <th scope="col">Birth Date</th>
+            <th scope="col">Phone</th>
             <th scope="col">Email</th>
             <th scope="col">Last Name</th>
             <th scope="col">First Name</th>
