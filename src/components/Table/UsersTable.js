@@ -1,24 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { get } from '../../utils/api-helper';
+import React, { useContext } from 'react';
 import TableEntries from './TableEntries';
+import UsersListContext from '../../store/users-list';
 
 export default function UsersTable() {
-  const [usersList, setUsersList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    setIsLoading(true);
-
-    get('/users')
-      .then((res) => {
-        const usersList = res.data.users;
-
-        setUsersList(usersList);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+  const { isLoading, usersList } = useContext(UsersListContext);
 
   let content = (
     <tr>

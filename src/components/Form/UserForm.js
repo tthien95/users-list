@@ -1,7 +1,7 @@
-import React from 'react';
-import { useCallback } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from '../../hooks/use-form';
+import UsersListContext from '../../store/users-list';
 import { post, put } from '../../utils/api-helper';
 
 const initialValues = {
@@ -37,18 +37,9 @@ const validations = {
 
 export default function UserForm() {
   const { userId } = useParams();
+  const { updateUser, addUser } = useContext(UsersListContext);
 
   const navigate = useNavigate();
-
-  const successHandler = useCallback(
-    (res) => {
-      if (res) {
-        console.log('Action succeeded!');
-        navigate('/');
-      }
-    },
-    [navigate]
-  );
 
   const onSubmit = async () => {
     console.log('User has submitted!');
@@ -56,10 +47,18 @@ export default function UserForm() {
     if (userId) {
       url = `/users/${userId}`;
 
-      return put(url, data).then(successHandler);
+      return put(url, data).then((res) => {
+        const { id, image, email, birthDate, phone, firstName, lastName } = res.data;
+        updateUser({ id, image, email, birthDate, phone, firstName, lastName });
+        navigate('/');
+      });
     }
 
-    return post(url, data).then(successHandler);
+    return post(url, data).then((res) => {
+      const { id, image, email, birthDate, phone, firstName, lastName } = res.data;
+      addUser({ id, image, email, birthDate, phone, firstName, lastName });
+      navigate('/');
+    });
   };
 
   const { data, handleChange, handleSubmit, loading, error } = useForm({
