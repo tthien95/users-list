@@ -1,10 +1,8 @@
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from '../../hooks/use-form';
-
-const onSubmit = () => {
-  console.log('User has submitted!');
-};
+import { post, put } from '../../utils/api-helper';
 
 const initialValues = {
   firstName: '',
@@ -14,22 +12,77 @@ const initialValues = {
   phone: ''
 };
 
+const validations = {
+  firstName: {
+    required: true,
+    validator: 'validateNoSpecialChar'
+  },
+  lastName: {
+    required: true,
+    validator: 'validateNoSpecialChar'
+  },
+  birthDate: {
+    required: false,
+    validator: null
+  },
+  email: {
+    required: true,
+    validator: 'validateEmail'
+  },
+  phone: {
+    required: false,
+    validator: 'validatePhone'
+  }
+};
+
 export default function UserForm() {
   const { userId } = useParams();
 
-  const { data, handleChange, handleSubmit, loading } = useForm({
+  const navigate = useNavigate();
+
+  const successHandler = useCallback(
+    (res) => {
+      if (res) {
+        console.log('Action succeeded!');
+        navigate('/');
+      }
+    },
+    [navigate]
+  );
+
+  const onSubmit = async () => {
+    console.log('User has submitted!');
+    let url = '/users/add';
+    if (userId) {
+      url = `/users/${userId}`;
+
+      return put(url, data).then(successHandler);
+    }
+
+    return post(url, data).then(successHandler);
+  };
+
+  const { data, handleChange, handleSubmit, loading, error } = useForm({
     initialValues,
+    validations,
     userId,
     onSubmit
   });
 
   const { firstName, lastName, birthDate, email, phone } = data;
+  const {
+    firstName: firstNameError,
+    lastName: lastNameError,
+    birthDate: birthDateError,
+    email: emailError,
+    phone: phoneError
+  } = error;
 
   if (loading) {
     return (
       <div
-        className="spinner-border mx-auto"
-        style={{ textAlign: 'center' }}
+        className="spinner-border mx-auto mt-3"
+        style={{ display: 'block' }}
         role="status"
       >
         <span className="visually-hidden">Loading...</span>
@@ -50,9 +103,11 @@ export default function UserForm() {
               type="text"
               className="form-control"
               id="firstName"
+              name="firstName"
               value={firstName}
               onChange={handleChange}
             />
+            {firstNameError && <p className="error">{firstNameError}</p>}
           </div>
           <div className="col-6">
             <label htmlFor="lastName" className="form-label">
@@ -62,9 +117,11 @@ export default function UserForm() {
               type="text"
               className="form-control"
               id="lastName"
+              name="lastName"
               value={lastName}
               onChange={handleChange}
             />
+            {lastNameError && <p className="error">{lastNameError}</p>}
           </div>
         </div>
         <div className="row">
@@ -76,9 +133,11 @@ export default function UserForm() {
               type="date"
               className="form-control"
               id="birthDate"
+              name="birthDate"
               value={birthDate}
               onChange={handleChange}
             />
+            {birthDateError && <p className="error">{birthDateError}</p>}
           </div>
         </div>
       </fieldset>
@@ -94,8 +153,10 @@ export default function UserForm() {
               className="form-control"
               id="email"
               value={email}
+              name="email"
               onChange={handleChange}
             />
+            {emailError && <p className="error">{emailError}</p>}
           </div>
           <div className="col-6">
             <label htmlFor="phone" className="form-label">
@@ -105,9 +166,11 @@ export default function UserForm() {
               type="tel"
               className="form-control"
               id="phone"
+              name="phone"
               value={phone}
               onChange={handleChange}
             />
+            {phoneError && <p className="error">{phoneError}</p>}
           </div>
         </div>
       </fieldset>
