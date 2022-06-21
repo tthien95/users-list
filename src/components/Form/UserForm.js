@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { useForm } from '../../hooks/use-form';
 import UsersListContext from '../../store/users-list';
 import { post, put } from '../../utils/api-helper';
+import { toastActions } from '../../store/toast-slice';
 
 const initialValues = {
   firstName: '',
@@ -38,6 +40,7 @@ const validations = {
 export default function UserForm() {
   const { userId } = useParams();
   const { updateUser, addUser } = useContext(UsersListContext);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -48,15 +51,31 @@ export default function UserForm() {
       url = `/users/${userId}`;
 
       return put(url, data).then((res) => {
-        const { id, image, email, birthDate, phone, firstName, lastName } = res.data;
+        const { id, image, email, birthDate, phone, firstName, lastName } =
+          res.data;
         updateUser({ id, image, email, birthDate, phone, firstName, lastName });
+        dispatch(
+          toastActions.showNotification({
+            status: 'success',
+            title: 'Success',
+            message: 'Request has been sent successfully'
+          })
+        );
         navigate('/');
       });
     }
 
     return post(url, data).then((res) => {
-      const { id, image, email, birthDate, phone, firstName, lastName } = res.data;
+      const { id, image, email, birthDate, phone, firstName, lastName } =
+        res.data;
       addUser({ id, image, email, birthDate, phone, firstName, lastName });
+      dispatch(
+        toastActions.showNotification({
+          status: 'success',
+          title: 'Success',
+          message: 'Request has been sent successfully'
+        })
+      );
       navigate('/');
     });
   };

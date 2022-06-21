@@ -4,10 +4,12 @@ import UsersTable from './components/Table/UsersTable';
 import { Routes, Route } from 'react-router-dom';
 import UserForm from './components/Form/UserForm';
 import { UserContextProvider } from './store/users-list';
+import Toast from './components/Toast/Toast';
 
 function App() {
   return (
     <>
+      <Toast/>
       <Navigation />
       <UserContextProvider>
         <Routes>
