@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import TableEntries from './TableEntries';
+import UsersTableEntries from './UsersTableEntries';
 import UsersListContext from '../../store/users-list';
 
 export default function UsersTable() {
@@ -24,7 +24,7 @@ export default function UsersTable() {
   );
 
   if (usersList.length > 0) {
-    content = <TableEntries usersData={usersList} />;
+    content = <UsersTableEntries usersData={usersList} />;
   }
 
   return (
