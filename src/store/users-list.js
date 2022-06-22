@@ -49,7 +49,8 @@ export const UserContextProvider = (props) => {
 
   const updateUser = (value) => {
     let currUsersList = [...usersList];
-    const userIndx = currUsersList.findIndex(({ id }) => id !== value.id);
+    // eslint-disable-next-line eqeqeq
+    const userIndx = currUsersList.findIndex(({ id }) => id == value.id);
     if (userIndx > -1) {
       currUsersList.splice(userIndx, 1, { ...value });
       setUsersList(currUsersList);
