@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import { Component } from 'react';
 import { createPortal } from 'react-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import classes from './Toast.module.css';
 import { toastActions } from '../../store/toast-slice';
 
@@ -9,48 +9,65 @@ const notiStatus = {
   error: '#d9534f'
 };
 
-export default function Toast() {
-  const notification = useSelector((state) => state.notification);
-  const dispatch = useDispatch();
+class Toast extends Component {
+  static interval = null;
 
-  useEffect(() => {
-    if (notification) {
-      const interval = setTimeout(() => {
-        dispatch(toastActions.hideNotification());
+  componentDidUpdate() {
+    if (this.props.notification) {
+      this.interval = setTimeout(() => {
+        this.props.hideNotification();
       }, 3000);
-
-      return () => {
-        clearTimeout(interval);
-      }
     }
-  }, [notification, dispatch]);
-
-  if (!notification) {
-    return null;
   }
 
-  const { status, title, message } = notification;
+  componentWillUnmount() {
+    clearTimeout(this.interval);
+  }
 
-  const content = (
-    <div className={classes['notification-container']}>
-      <div
-        className={`${classes.notification} ${classes.toast}`}
-        style={{ backgroundColor: notiStatus[status] }}
-      >
-        <button
-          onClick={() => {
-            dispatch(toastActions.hideNotification());
-          }}
+  render() {
+    const { notification, hideNotification } = this.props;
+
+    if (!notification) {
+      return null;
+    }
+
+    const { status, title, message } = notification;
+
+    const content = (
+      <div className={classes['notification-container']}>
+        <div
+          className={`${classes.notification} ${classes.toast}`}
+          style={{ backgroundColor: notiStatus[status] }}
         >
-          X
-        </button>
-        <div>
-          <p className={classes['notification-title']}>{title}</p>
-          <p className={classes['notification-message']}>{message}</p>
+          <button
+            onClick={() => {
+              hideNotification();
+            }}
+          >
+            X
+          </button>
+          <div>
+            <p className={classes['notification-title']}>{title}</p>
+            <p className={classes['notification-message']}>{message}</p>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
 
-  return createPortal(content, document.getElementById('toastNoti'));
+    return createPortal(content, document.getElementById('toastNoti'));
+  }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    hideNotification: () => dispatch(toastActions.hideNotification())
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Toast);
