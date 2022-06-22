@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { get } from '../utils/api-helper';
+import { toastActions } from './toast-slice';
 
 const UsersListContext = React.createContext({
   usersList: [],
@@ -11,19 +13,33 @@ const UsersListContext = React.createContext({
 export const UserContextProvider = (props) => {
   const [usersList, setUsersList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setIsLoading(true);
+
+    const fnHandleError = ({ response }) => {
+      dispatch(
+        toastActions.showNotification({
+          status: 'error',
+          title: 'Error',
+          message:
+            response?.data?.message ||
+            response?.statusText ||
+            'There is something wrong happended while fetching data'
+        })
+      );
+    };
 
     get('/users')
       .then((res) => {
         const usersList = res.data.users;
         setUsersList(usersList);
-      })
+      }, fnHandleError)
       .finally(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [dispatch]);
 
   const addUser = (value) => {
     let currUsersList = [...usersList];

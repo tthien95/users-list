@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useForm } from '../../hooks/use-form';
@@ -44,6 +44,22 @@ export default function UserForm() {
 
   const navigate = useNavigate();
 
+  const fnHandleError = useCallback(
+    ({ response }) => {
+      dispatch(
+        toastActions.showNotification({
+          status: 'error',
+          title: 'Error',
+          message:
+            response?.data?.message ||
+            response?.statusText ||
+            'There is something wrong happended while fetching data'
+        })
+      );
+    },
+    [dispatch]
+  );
+
   const onSubmit = async () => {
     console.log('User has submitted!');
     let url = '/users/add';
@@ -58,11 +74,11 @@ export default function UserForm() {
           toastActions.showNotification({
             status: 'success',
             title: 'Success',
-            message: 'Request has been sent successfully'
+            message: 'Update request has been sent successfully'
           })
         );
         navigate('/');
-      });
+      }, fnHandleError);
     }
 
     return post(url, data).then((res) => {
@@ -73,11 +89,11 @@ export default function UserForm() {
         toastActions.showNotification({
           status: 'success',
           title: 'Success',
-          message: 'Request has been sent successfully'
+          message: 'Add request has been sent successfully'
         })
       );
       navigate('/');
-    });
+    }, fnHandleError);
   };
 
   const { data, handleChange, handleSubmit, loading, error } = useForm({

@@ -1,40 +1,78 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { get } from '../utils/api-helper';
 import validators from '../utils/validation';
+import { useDispatch } from 'react-redux';
+import { toastActions } from '../store/toast-slice';
+import { useNavigate } from 'react-router-dom';
 
-export const useForm = (options) => {
-  const [data, setData] = useState(options?.initialValues || {});
+export const useForm = ({
+  initialValues = {},
+  userId = '',
+  validations,
+  onSubmit
+}) => {
+  const [data, setData] = useState(initialValues);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({});
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const fnHandleError = useCallback(
+    ({ response }) => {
+      dispatch(
+        toastActions.showNotification({
+          status: 'error',
+          title: 'Error',
+          message:
+            response?.data?.message ||
+            response?.statusText ||
+            'There is something wrong happended while fetching data'
+        })
+      );
+      navigate('/');
+    },
+    [dispatch, navigate]
+  );
 
   useEffect(() => {
-    if (options?.userId) {
+    if (userId) {
       setLoading(true);
-      get(`/users/${options.userId}`)
-        .then((res) => {
-          if (!res || res.message) {
-            console.error('There is something wrong with the request');
-          } else {
-            const { firstName, lastName, birthDate, email, phone } = res.data;
-            setData({
-              firstName,
-              lastName,
-              birthDate,
-              email,
-              phone
-            });
-          }
-        })
+      const fnHandleSuccess = (res) => {
+        if (!res || res.message) {
+          dispatch(
+            toastActions.showNotification({
+              status: 'error',
+              title: 'Error',
+              message:
+                res?.message ||
+                'There is something wrong happended while fetching data'
+            })
+          );
+          navigate('/');
+        } else {
+          const { firstName, lastName, birthDate, email, phone } = res.data;
+          setData({
+            firstName,
+            lastName,
+            birthDate,
+            email,
+            phone
+          });
+        }
+      };
+
+      get(`/users/${userId}`)
+        .then(fnHandleSuccess, fnHandleError)
         .finally(() => {
           setLoading(false);
         });
     } else {
-      let data = options?.initialValues || {};
+      let data = initialValues;
       setData({
         ...data
       });
     }
-  }, [options.userId, options.initialValues]);
+  }, [userId, initialValues, dispatch, navigate, fnHandleError]);
 
   const handleChange = (event) => {
     if (event?.target?.name) {
@@ -49,7 +87,6 @@ export const useForm = (options) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const validations = options?.validations;
     if (validations) {
       let valid = true;
       const newError = {};
@@ -83,9 +120,9 @@ export const useForm = (options) => {
 
     setError({});
 
-    if (options?.onSubmit) {
+    if (onSubmit) {
       setLoading(true);
-      options.onSubmit().finally(() => {
+      onSubmit().finally(() => {
         setLoading(false);
       });
     }

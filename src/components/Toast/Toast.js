@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classes from './Toast.module.css';
@@ -13,6 +13,18 @@ export default function Toast() {
   const notification = useSelector((state) => state.notification);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (notification) {
+      const interval = setTimeout(() => {
+        dispatch(toastActions.hideNotification());
+      }, 3000);
+
+      return () => {
+        clearTimeout(interval);
+      }
+    }
+  }, [notification, dispatch]);
+
   if (!notification) {
     return null;
   }
@@ -20,9 +32,7 @@ export default function Toast() {
   const { status, title, message } = notification;
 
   const content = (
-    <div
-      className={classes['notification-container']}
-    >
+    <div className={classes['notification-container']}>
       <div
         className={`${classes.notification} ${classes.toast}`}
         style={{ backgroundColor: notiStatus[status] }}
