@@ -13,3 +13,7 @@ export const post = (url, body) => {
 export const put = (url, body) => {
   return axios.put(baseUrl + url, body);
 };
+
+export const deleteReq = (url, body) => {
+  return axios.delete(baseUrl + url, body);
+};

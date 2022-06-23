@@ -1,4 +1,4 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useForm } from '../../hooks/use-form';
@@ -39,26 +39,10 @@ const validations = {
 
 const UserForm = () => {
   const { userId } = useParams();
-  const { updateUser, addUser } = useContext(UsersListContext);
+  const { updateUser, addUser, fnHandleError } = useContext(UsersListContext);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-
-  const fnHandleError = useCallback(
-    ({ response }) => {
-      dispatch(
-        toastActions.showNotification({
-          status: 'error',
-          title: 'Error',
-          message:
-            response?.data?.message ||
-            response?.statusText ||
-            'There is something wrong happended while fetching data'
-        })
-      );
-    },
-    [dispatch]
-  );
 
   const onSubmit = async () => {
     console.log('User has submitted!');

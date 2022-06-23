@@ -1,11 +1,36 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import UsersListContext from '../../store/users-list';
+import { deleteReq } from '../../utils/api-helper';
+import { toastActions } from '../../store/toast-slice';
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' });
 
 const TableEntries = ({ usersData }) => {
-  const { deleteUser } = useContext(UsersListContext);
+  const { deleteUser, setIsLoading, fnHandleError } = useContext(UsersListContext);
+  const dispatch = useDispatch();
+
+  const handleDelete = useCallback(
+    (userId) => {
+      setIsLoading(true);
+      deleteReq(`/users/${userId}`)
+        .then(() => {
+          dispatch(
+            toastActions.showNotification({
+              status: 'success',
+              title: 'Success',
+              message: 'Delete request has been sent successfully'
+            })
+          );
+          deleteUser(userId);
+        }, fnHandleError)
+        .finally(() => {
+          setIsLoading(false);
+        });
+    },
+    [deleteUser, setIsLoading, fnHandleError, dispatch]
+  );
 
   return usersData.map(
     ({ id, image, email, birthDate, phone, firstName, lastName }) => {
@@ -29,7 +54,7 @@ const TableEntries = ({ usersData }) => {
               <Link to={`/user/${id}`}>
                 <button>Edit</button>
               </Link>
-              <button onClick={() => deleteUser(id)}>Delete</button>
+              <button onClick={() => handleDelete(id)}>Delete</button>
             </div>
           </td>
         </tr>

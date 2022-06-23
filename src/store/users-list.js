@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { get } from '../utils/api-helper';
 import { toastActions } from './toast-slice';
 
 const UsersListContext = React.createContext({
   usersList: [],
+  setUsersList: () => {},
   isLoading: false,
   addUser: () => {},
   updateUser: () => {},
-  deleteUser: () => {} 
+  deleteUser: () => {},
+  setIsLoading: () => {},
+  fnHandleError: () => {}
 });
 
 export const UserContextProvider = (props) => {
@@ -16,10 +18,8 @@ export const UserContextProvider = (props) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    setIsLoading(true);
-
-    const fnHandleError = ({ response }) => {
+  const fnHandleError = useCallback(
+    ({ response }) => {
       dispatch(
         toastActions.showNotification({
           status: 'error',
@@ -30,17 +30,9 @@ export const UserContextProvider = (props) => {
             'There is something wrong happended while fetching data'
         })
       );
-    };
-
-    get('/users')
-      .then((res) => {
-        const usersList = res.data.users;
-        setUsersList(usersList);
-      }, fnHandleError)
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [dispatch]);
+    },
+    [dispatch]
+  );
 
   const addUser = (value) => {
     let currUsersList = [...usersList];
@@ -66,11 +58,20 @@ export const UserContextProvider = (props) => {
       currUsersList.splice(userIndx, 1);
       setUsersList(currUsersList);
     }
-  }
+  };
 
   return (
     <UsersListContext.Provider
-      value={{ usersList, addUser, updateUser, deleteUser, isLoading }}
+      value={{
+        usersList,
+        setUsersList,
+        addUser,
+        updateUser,
+        deleteUser,
+        isLoading,
+        setIsLoading,
+        fnHandleError
+      }}
     >
       {props.children}
     </UsersListContext.Provider>

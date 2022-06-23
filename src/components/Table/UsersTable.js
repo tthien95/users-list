@@ -1,9 +1,28 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import UsersTableEntries from './UsersTableEntries';
 import UsersListContext from '../../store/users-list';
+import { get } from '../../utils/api-helper';
+
+let isInitialLoad = true;
 
 const UsersTable = () => {
-  const { isLoading, usersList } = useContext(UsersListContext);
+  const { isLoading, setIsLoading, usersList, setUsersList, fnHandleError } =
+    useContext(UsersListContext);
+
+  useEffect(() => {
+    if (isInitialLoad) {
+      setIsLoading(true);
+      get('/users')
+        .then((res) => {
+          const usersList = res.data.users;
+          setUsersList(usersList);
+          isInitialLoad = false;
+        }, fnHandleError)
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }
+  }, [fnHandleError, setUsersList, setIsLoading]);
 
   let content = (
     <tr>
@@ -23,7 +42,7 @@ const UsersTable = () => {
     </tr>
   );
 
-  if (usersList.length > 0) {
+  if (usersList.length > 0 && !isLoading) {
     content = <UsersTableEntries usersData={usersList} />;
   }
 
