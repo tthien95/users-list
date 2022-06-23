@@ -6,10 +6,10 @@ import UserForm from './components/Form/UserForm';
 import { UserContextProvider } from './store/users-list';
 import Toast from './components/Toast/Toast';
 
-function App() {
+const App = () => {
   return (
     <>
-      <Toast/>
+      <Toast />
       <Navigation />
       <UserContextProvider>
         <Routes>
@@ -20,6 +20,6 @@ function App() {
       </UserContextProvider>
     </>
   );
-}
+};
 
 export default App;

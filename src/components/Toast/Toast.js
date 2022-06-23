@@ -9,7 +9,7 @@ const notiStatus = {
   error: '#d9534f'
 };
 
-export default function Toast() {
+const Toast = () => {
   const notification = useSelector((state) => state.notification);
   const dispatch = useDispatch();
 
@@ -21,7 +21,7 @@ export default function Toast() {
 
       return () => {
         clearTimeout(interval);
-      }
+      };
     }
   }, [notification, dispatch]);
 
@@ -53,4 +53,6 @@ export default function Toast() {
   );
 
   return createPortal(content, document.getElementById('toastNoti'));
-}
+};
+
+export default Toast;

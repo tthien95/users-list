@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import UsersListContext from '../../store/users-list';
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' });
 
-export default function TableEntries({ usersData }) {
+const TableEntries = ({ usersData }) => {
+  const { deleteUser } = useContext(UsersListContext);
+
   return usersData.map(
     ({ id, image, email, birthDate, phone, firstName, lastName }) => {
       return (
@@ -22,12 +25,17 @@ export default function TableEntries({ usersData }) {
           <td className="align-middle">{firstName}</td>
           <td className="align-middle">{lastName}</td>
           <td className="align-middle">
-            <Link to={`/user/${id}`}>
-              <button>Edit</button>
-            </Link>
+            <div className="d-flex justify-content-between">
+              <Link to={`/user/${id}`}>
+                <button>Edit</button>
+              </Link>
+              <button onClick={() => deleteUser(id)}>Delete</button>
+            </div>
           </td>
         </tr>
       );
     }
   );
-}
+};
+
+export default TableEntries;

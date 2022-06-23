@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import UsersTableEntries from './UsersTableEntries';
 import UsersListContext from '../../store/users-list';
 
-export default function UsersTable() {
+const UsersTable = () => {
   const { isLoading, usersList } = useContext(UsersListContext);
 
   let content = (
@@ -46,4 +46,6 @@ export default function UsersTable() {
       </table>
     </div>
   );
-}
+};
+
+export default UsersTable;

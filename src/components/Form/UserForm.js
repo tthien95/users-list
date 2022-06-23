@@ -37,7 +37,7 @@ const validations = {
   }
 };
 
-export default function UserForm() {
+const UserForm = () => {
   const { userId } = useParams();
   const { updateUser, addUser } = useContext(UsersListContext);
   const dispatch = useDispatch();
@@ -217,4 +217,6 @@ export default function UserForm() {
       </div>
     </form>
   );
-}
+};
+
+export default UserForm;
