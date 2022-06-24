@@ -6,7 +6,7 @@ import { get } from '../../utils/api-helper';
 let isInitialLoad = true;
 
 const UsersTable = () => {
-  const { isLoading, setIsLoading, usersList, setUsersList, fnHandleError } =
+  const { setIsLoading, usersList, setUsersList, fnHandleError } =
     useContext(UsersListContext);
 
   useEffect(() => {
@@ -24,28 +24,6 @@ const UsersTable = () => {
     }
   }, [fnHandleError, setUsersList, setIsLoading]);
 
-  let content = (
-    <tr>
-      <td colSpan="8" className="text-center">
-        {isLoading ? (
-          <div
-            className="spinner-border"
-            style={{ textAlign: 'center' }}
-            role="status"
-          >
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        ) : (
-          <p className="text-center">No Data</p>
-        )}
-      </td>
-    </tr>
-  );
-
-  if (usersList.length > 0 && !isLoading) {
-    content = <UsersTableEntries usersData={usersList} />;
-  }
-
   return (
     <div className="container-md mt-3">
       <table className="table table-hover">
@@ -61,7 +39,9 @@ const UsersTable = () => {
             <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody>{content}</tbody>
+        <tbody>
+          <UsersTableEntries usersData={usersList} />
+        </tbody>
       </table>
     </div>
   );

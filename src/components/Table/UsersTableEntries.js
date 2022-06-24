@@ -8,7 +8,8 @@ import { toastActions } from '../../store/toast-slice';
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' });
 
 const TableEntries = ({ usersData }) => {
-  const { deleteUser, setIsLoading, fnHandleError } = useContext(UsersListContext);
+  const { deleteUser, isLoading, setIsLoading, fnHandleError } =
+    useContext(UsersListContext);
   const dispatch = useDispatch();
 
   const handleDelete = useCallback(
@@ -31,6 +32,26 @@ const TableEntries = ({ usersData }) => {
     },
     [deleteUser, setIsLoading, fnHandleError, dispatch]
   );
+
+  if (usersData.length === 0 || isLoading) {
+    return (
+      <tr>
+        <td colSpan="8" className="text-center">
+          {isLoading ? (
+            <div
+              className="spinner-border"
+              style={{ textAlign: 'center' }}
+              role="status"
+            >
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          ) : (
+            <p className="text-center">No Data</p>
+          )}
+        </td>
+      </tr>
+    );
+  }
 
   return usersData.map(
     ({ id, image, email, birthDate, phone, firstName, lastName }) => {
