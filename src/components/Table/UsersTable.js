@@ -25,7 +25,7 @@ const UsersTable = () => {
   }, [fnHandleError, setUsersList, setIsLoading]);
 
   return (
-    <div className="container-md mt-3">
+    <div className="container-md mt-3 table-responsive">
       <table className="table table-hover">
         <thead>
           <tr>
