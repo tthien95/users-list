@@ -1,16 +1,39 @@
-import { screen, render, cleanup, within } from '@testing-library/react';
+import { screen, render, cleanup, within, waitFor } from '@testing-library/react';
 import UsersListContext from '../store/users-list';
 import UsersTableEntries from '../components/Table/UsersTableEntries';
 import { Provider } from 'react-redux';
 import store from '../store/index';
 import { BrowserRouter } from 'react-router-dom';
+import { deleteReq } from '../utils/api-helper';
+import { Simulate } from 'react-dom/test-utils';
+
+jest.mock('../utils/api-helper');
+
+const sampleUsers = [
+  {
+    id: 1,
+    firstName: 'Terry',
+    lastName: 'Medhurst',
+    birthDate: '2000-12-25',
+    email: 'atuny0@sohu.com',
+    phone: '+63 791 675 8914'
+  },
+  {
+    id: 2,
+    firstName: 'Sheldon',
+    lastName: 'Quigley',
+    birthDate: '2003-08-02',
+    email: 'hbingley1@plala.or.jp',
+    phone: '+07 813 117 7139'
+  }
+];
 
 const renderWithContext = ({
-  setIsLoading = jest.fn(),
-  deleteUser = jest.fn(),
+  setIsLoading = () => {},
+  deleteUser = () => {},
   isLoading = false,
   usersList = [],
-  fnHandleError = jest.fn()
+  fnHandleError = () => {}
 }) => {
   return render(
     <BrowserRouter>
@@ -50,26 +73,7 @@ describe('UsersTableEntries', () => {
   });
 
   it('should show users data', () => {
-    const usersList = [
-      {
-        id: 1,
-        firstName: 'Terry',
-        lastName: 'Medhurst',
-        birthDate: '2000-12-25',
-        email: 'atuny0@sohu.com',
-        phone: '+63 791 675 8914'
-      },
-      {
-        id: 2,
-        firstName: 'Sheldon',
-        lastName: 'Quigley',
-        birthDate: '2003-08-02',
-        email: 'hbingley1@plala.or.jp',
-        phone: '+07 813 117 7139'
-      }
-    ];
-
-    renderWithContext({ isLoading: false, usersList });
+    renderWithContext({ isLoading: false, usersList: sampleUsers });
 
     const allRows = screen.getAllByRole('row');
     expect(allRows).toHaveLength(2);
@@ -77,5 +81,50 @@ describe('UsersTableEntries', () => {
     const firstRow = allRows[0];
     expect(within(firstRow).getByRole('rowheader')).toBeInTheDocument();
     expect(within(firstRow).getAllByRole('cell')).toHaveLength(7);
+  });
+
+  it('should have action buttons for each rows', () => {
+    const user = [
+      {
+        ...sampleUsers[0]
+      }
+    ];
+
+    renderWithContext({ isLoading: false, usersList: user });
+    const lastCell = within(screen.getAllByRole('row')[0]).getAllByRole(
+      'cell'
+    )[6];
+    expect(within(lastCell).getByText('Edit')).toBeInTheDocument();
+    expect(within(lastCell).getByText('Delete')).toBeInTheDocument();
+  });
+
+  it('should delete button trigger event', async () => {
+    const user = [
+      {
+        ...sampleUsers[0]
+      }
+    ];
+
+    deleteReq.mockResolvedValue('ok');
+
+    const setIsLoading = jest.fn();
+    const deleteUser = jest.fn()
+
+    renderWithContext({ isLoading: false, usersList: user, setIsLoading, deleteUser });
+    const lastCell = within(screen.getAllByRole('row')[0]).getAllByRole(
+      'cell'
+    )[6];
+
+    const button = within(lastCell).getByText('Delete');
+    Simulate.click(button);
+
+    await waitFor(() => expect(setIsLoading).toHaveBeenCalledTimes(2));
+
+    expect(deleteUser).toBeCalledTimes(1);
+    expect(deleteUser).toBeCalledWith(sampleUsers[0].id);
+
+    expect(setIsLoading.mock.calls[0][0]).toBeTruthy();
+    expect(setIsLoading.mock.calls[1][0]).toBeFalsy();
+    
   });
 });

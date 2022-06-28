@@ -32,7 +32,7 @@ const Toast = () => {
   const { status, title, message } = notification;
 
   const content = (
-    <div className={classes['notification-container']}>
+    <div role='alert' className={classes['notification-container']}>
       <div
         className={`${classes.notification} ${classes.toast}`}
         style={{ backgroundColor: notiStatus[status] }}

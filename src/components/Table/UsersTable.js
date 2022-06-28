@@ -1,22 +1,22 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import UsersTableEntries from './UsersTableEntries';
 import UsersListContext from '../../store/users-list';
 import { get } from '../../utils/api-helper';
-
-let isInitialLoad = true;
 
 const UsersTable = () => {
   const { setIsLoading, usersList, setUsersList, fnHandleError } =
     useContext(UsersListContext);
 
+  let isInitialLoad = useRef(true);
+
   useEffect(() => {
-    if (isInitialLoad) {
+    if (isInitialLoad.current) {
       setIsLoading(true);
       get('/users')
         .then((res) => {
           const usersList = res.data.users;
           setUsersList(usersList);
-          isInitialLoad = false;
+          isInitialLoad.current = false;
         }, fnHandleError)
         .finally(() => {
           setIsLoading(false);

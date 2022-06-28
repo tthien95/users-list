@@ -1,0 +1,5 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navigation should match snapshot for error 1`] = `<DocumentFragment />`;
+
+exports[`Navigation should match snapshot for success 1`] = `<DocumentFragment />`;
