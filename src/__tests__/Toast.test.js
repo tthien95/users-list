@@ -1,9 +1,11 @@
-import { cleanup, render, screen, within } from '@testing-library/react';
+import { cleanup, render, waitFor, within } from '@testing-library/react';
 import Toast from '../components/Toast/Toast';
 
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { createPortal } from 'react-dom';
 import store from '../store/index';
+import { Simulate } from 'react-dom/test-utils';
+import { toastActions } from '../store/toast-slice';
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -53,6 +55,48 @@ describe('Navigation', () => {
 
   it('should not render toast when there is no notification', () => {
     useSelector.mockReturnValueOnce(null);
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    const { container } = renderWithProvider();
+    expect(within(container).queryByRole('alert')).not.toBeInTheDocument();
+  });
+
+  it('should trigger handler to close notification when press X button', () => {
+    useSelector.mockReturnValueOnce({
+      status: 'success',
+      title: 'Success',
+      message: 'Success Message'
+    });
+
+    const dispatch = jest.fn();
+
+    useDispatch.mockReturnValueOnce(dispatch);
+
+    const { container } = renderWithProvider();
+    const noti = within(container).queryByRole('alert');
+    const button = within(noti).getByRole('button');
+
+    Simulate.click(button);
+
+    expect(dispatch).toBeCalledTimes(1);
+    expect(dispatch).toBeCalledWith(toastActions.hideNotification());
+  });
+
+  it('should trigger handler to close notification after 3 seconds', async () => {
+    useSelector.mockReturnValueOnce({
+      status: 'success',
+      title: 'Success',
+      message: 'Success Message'
+    });
+
+    const dispatch = jest.fn();
+
+    useDispatch.mockReturnValueOnce(dispatch);
+
+    renderWithProvider();
+
+    await waitFor(() => expect(dispatch).toHaveBeenCalledTimes(1), {
+      timeout: 3100
+    });
+
+    expect(dispatch).toBeCalledWith(toastActions.hideNotification());
   });
 });
