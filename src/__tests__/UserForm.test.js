@@ -111,19 +111,32 @@ describe('UserForm', () => {
 
     wrapperRender({ addUser });
 
-    const fields = ['firstName', 'lastName', 'birthDate', 'email', 'phone'];
+    const fields = {
+      firstName: 'First Name',
+      lastName: 'Last Name',
+      birthDate: 'Birth Date',
+      email: 'Email address',
+      phone: 'Phone'
+    };
 
-    fields.forEach((field) => {
-      Simulate.change(screen.getByRole('textbox', { name: field }), {
-        target: { value: testData[field] }
-      });
+    act(() => {
+      for (const key in fields) {
+        if (Object.hasOwnProperty.call(fields, key)) {
+          const element = fields[key];
+          Simulate.change(screen.getByLabelText(element), {
+            target: { value: testData[key], name: key }
+          });
+        }
+      }
     });
 
-    Simulate.click(screen.getByRole('button'));
-
-    await waitFor(() => expect(post).toBeCalled());
+    act(() => {
+      Simulate.submit(screen.getByRole('form'));
+    });
+    
+    expect(post).toBeCalled();
     expect(post).toBeCalledWith('/users/add', testData);
-    expect(addUser).toBeCalled();
+    await waitFor(() => expect(addUser).toBeCalled());
     expect(dispatch).toBeCalled();
     expect(navigate).toBeCalled();
     expect(navigate).toBeCalledWith('/');

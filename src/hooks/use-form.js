@@ -76,10 +76,10 @@ export const useForm = ({
 
   const handleChange = (event) => {
     if (event?.target?.name) {
-      setData({
-        ...data,
+      setData((prevData) => ({
+        ...prevData,
         [event.target.name]: event.target.value
-      });
+      }));
     } else {
       console.error('Please set name attribute for this input');
     }

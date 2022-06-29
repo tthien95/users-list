@@ -45,7 +45,6 @@ const UserForm = () => {
   const navigate = useNavigate();
 
   const onSubmit = async () => {
-    console.log('User has submitted!');
     let url = '/users/add';
     if (userId) {
       url = `/users/${userId}`;
@@ -109,7 +108,7 @@ const UserForm = () => {
   }
 
   return (
-    <form className="container-md mt-3" onSubmit={handleSubmit}>
+    <form className="container-md mt-3" onSubmit={handleSubmit} role='form'>
       <fieldset className="row mb-3 container">
         <legend>Personal Info: </legend>
         <div className="row mb-3">
