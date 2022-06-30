@@ -4,8 +4,8 @@ import Toast from '../components/Toast/Toast';
 import { useSelector, useDispatch, Provider } from 'react-redux';
 import { createPortal } from 'react-dom';
 import store from '../store/index';
-import { Simulate } from 'react-dom/test-utils';
 import { toastActions } from '../store/toast-slice';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
@@ -74,7 +74,7 @@ describe('Navigation', () => {
     const noti = within(container).queryByRole('alert');
     const button = within(noti).getByRole('button');
 
-    Simulate.click(button);
+    userEvent.click(button)
 
     expect(dispatch).toBeCalledTimes(1);
     expect(dispatch).toBeCalledWith(toastActions.hideNotification());

@@ -18,12 +18,13 @@ export const useForm = ({
   const navigate = useNavigate();
 
   const fnHandleError = useCallback(
-    ({ response }) => {
+    ({ response } = {}, customMess = '') => {
       dispatch(
         toastActions.showNotification({
           status: 'error',
           title: 'Error',
           message:
+            customMess ||
             response?.data?.message ||
             response?.statusText ||
             'There is something wrong happended while fetching data'
@@ -39,16 +40,7 @@ export const useForm = ({
       setLoading(true);
       const fnHandleSuccess = (res) => {
         if (!res || res.message) {
-          dispatch(
-            toastActions.showNotification({
-              status: 'error',
-              title: 'Error',
-              message:
-                res?.message ||
-                'There is something wrong happended while fetching data'
-            })
-          );
-          navigate('/');
+          fnHandleError(undefined, res?.message);
         } else {
           const { firstName, lastName, birthDate, email, phone } = res.data;
           setData({

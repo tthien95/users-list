@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { useForm } from '../../hooks/use-form';
@@ -24,7 +24,7 @@ const validations = {
     validator: 'validateNoSpecialChar'
   },
   birthDate: {
-    required: false,
+    required: true,
     validator: null
   },
   email: {
@@ -44,38 +44,35 @@ const UserForm = () => {
 
   const navigate = useNavigate();
 
+  const fnSuccess = useCallback(
+    (res, ctxHandler, message) => {
+      const { id, image, email, birthDate, phone, firstName, lastName } =
+        res.data;
+      ctxHandler({ id, image, email, birthDate, phone, firstName, lastName });
+      dispatch(
+        toastActions.showNotification({
+          status: 'success',
+          title: 'Success',
+          message: message
+        })
+      );
+      navigate('/');
+    },
+    [dispatch, navigate]
+  );
+
   const onSubmit = async () => {
     let url = '/users/add';
     if (userId) {
       url = `/users/${userId}`;
 
       return put(url, data).then((res) => {
-        const { id, image, email, birthDate, phone, firstName, lastName } =
-          res.data;
-        updateUser({ id, image, email, birthDate, phone, firstName, lastName });
-        dispatch(
-          toastActions.showNotification({
-            status: 'success',
-            title: 'Success',
-            message: 'Update request has been sent successfully'
-          })
-        );
-        navigate('/');
+        fnSuccess(res, updateUser, 'Update request has been sent successfully');
       }, fnHandleError);
     }
 
     return post(url, data).then((res) => {
-      const { id, image, email, birthDate, phone, firstName, lastName } =
-        res.data;
-      addUser({ id, image, email, birthDate, phone, firstName, lastName });
-      dispatch(
-        toastActions.showNotification({
-          status: 'success',
-          title: 'Success',
-          message: 'Add request has been sent successfully'
-        })
-      );
-      navigate('/');
+      fnSuccess(res, addUser, 'Add request has been sent successfully');
     }, fnHandleError);
   };
 
@@ -108,7 +105,7 @@ const UserForm = () => {
   }
 
   return (
-    <form className="container-md mt-3" onSubmit={handleSubmit} role='form'>
+    <form className="container-md mt-3" onSubmit={handleSubmit}>
       <fieldset className="row mb-3 container">
         <legend>Personal Info: </legend>
         <div className="row mb-3">

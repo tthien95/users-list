@@ -4,10 +4,10 @@ import UsersTableEntries from '../components/Table/UsersTableEntries';
 import { Provider } from 'react-redux';
 import store from '../store/index';
 import { BrowserRouter } from 'react-router-dom';
-import { deleteReq } from '../utils/api-helper';
-import { Simulate } from 'react-dom/test-utils';
+import axios from 'axios';
+import userEvent from '@testing-library/user-event';
 
-jest.mock('../utils/api-helper');
+jest.mock('axios');
 
 const sampleUsers = [
   {
@@ -105,7 +105,7 @@ describe('UsersTableEntries', () => {
       }
     ];
 
-    deleteReq.mockResolvedValue('ok');
+    axios.delete.mockResolvedValue('ok');
 
     const setIsLoading = jest.fn();
     const deleteUser = jest.fn()
@@ -116,7 +116,7 @@ describe('UsersTableEntries', () => {
     )[6];
 
     const button = within(lastCell).getByText('Delete');
-    Simulate.click(button);
+    userEvent.click(button)
 
     await waitFor(() => expect(setIsLoading).toHaveBeenCalledTimes(2));
 

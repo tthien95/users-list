@@ -3,10 +3,10 @@ import UsersTable from '../components/Table/UsersTable';
 import { Provider } from 'react-redux';
 import UsersListContext from '../store/users-list';
 import store from '../store/index';
-import { get } from '../utils/api-helper';
+import axios from 'axios';
 import { useRef } from 'react';
 
-jest.mock('../utils/api-helper');
+jest.mock('axios');
 jest.mock('react', () => {
   const originReact = jest.requireActual('react');
   const mUseRef = jest.fn();
@@ -31,7 +31,7 @@ const renderWithContext = ({
   setIsLoading = () => {},
   setUsersList = () => {},
   fnHandleError = () => {}
-}) => {
+} = {}) => {
   return render(
     <Provider store={store}>
       <UsersListContext.Provider
@@ -51,7 +51,7 @@ const renderWithContext = ({
 describe('UsersTable', () => {
   beforeEach (() => {
     useRef.mockReturnValue({ current: true });
-    get.mockResolvedValue({
+    axios.get.mockResolvedValue({
       data: {
         users: []
       }
@@ -61,7 +61,7 @@ describe('UsersTable', () => {
   afterAll(cleanup);
 
   it('should render table with columns', () => {
-    renderWithContext({});
+    renderWithContext();
 
     expect(screen.getAllByRole('columnheader')).toHaveLength(8);
   });
@@ -70,7 +70,7 @@ describe('UsersTable', () => {
     const setIsLoading = jest.fn();
     const setUsersList = jest.fn();
 
-    get.mockResolvedValueOnce({
+    axios.get.mockResolvedValueOnce({
       data: {
         users: [...sampleUsers]
       }
