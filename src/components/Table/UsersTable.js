@@ -7,22 +7,17 @@ const UsersTable = () => {
   const { setIsLoading, usersList, setUsersList, fnHandleError } =
     useContext(UsersListContext);
 
-  let isInitialLoad = useRef(true);
-
   useEffect(() => {
-    if (isInitialLoad.current) {
-      setIsLoading(true);
-      get('/users')
-        .then((res) => {
-          const usersList = res.data.users;
-          setUsersList(usersList);
-          isInitialLoad.current = false;
-        }, fnHandleError)
-        .finally(() => {
-          setIsLoading(false);
-        });
-    }
-  }, [fnHandleError, setUsersList, setIsLoading]);
+    setIsLoading(true);
+    get('/users')
+      .then((res) => {
+        const usersList = res.data.users;
+        setUsersList(usersList);
+      }, fnHandleError)
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   return (
     <div className="container-md mt-3 table-responsive">

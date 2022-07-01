@@ -46,7 +46,9 @@ const TableEntries = ({ usersData }) => {
               <span className="visually-hidden">Loading...</span>
             </div>
           ) : (
-            <p className="text-center" data-testid='nodata'>No Data</p>
+            <p className="text-center" data-testid="nodata">
+              No Data
+            </p>
           )}
         </td>
       </tr>

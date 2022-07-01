@@ -4,17 +4,8 @@ import { Provider } from 'react-redux';
 import UsersListContext from '../store/users-list';
 import store from '../store/index';
 import axios from 'axios';
-import { useRef } from 'react';
 
 jest.mock('axios');
-jest.mock('react', () => {
-  const originReact = jest.requireActual('react');
-  const mUseRef = jest.fn();
-  return {
-    ...originReact,
-    useRef: mUseRef
-  };
-});
 
 const sampleUsers = [
   {
@@ -50,7 +41,6 @@ const renderWithContext = ({
 
 describe('UsersTable', () => {
   beforeEach (() => {
-    useRef.mockReturnValue({ current: true });
     axios.get.mockResolvedValue({
       data: {
         users: []
@@ -87,15 +77,4 @@ describe('UsersTable', () => {
     expect(setIsLoading.mock.calls[1][0]).toBeFalsy();
   });
 
-  it('should not run side effect on second render', async () => {
-    const setIsLoading = jest.fn();
-    const setUsersList = jest.fn();
-
-    useRef.mockReturnValueOnce({ current: false });
-
-    renderWithContext({ setIsLoading, setUsersList });
-
-    expect(setUsersList).toBeCalledTimes(0);
-    expect(setIsLoading).toBeCalledTimes(0);
-  });
 });
