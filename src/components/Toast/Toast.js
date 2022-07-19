@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import classes from './Toast.module.css';
+import classes from './Toast.module.scss';
 import { toastActions } from '../../store/toast-slice';
 
 const notiStatus = {

@@ -5,6 +5,7 @@ import { useForm } from '../../hooks/use-form';
 import UsersListContext from '../../store/users-list';
 import { post, put } from '../../utils/api-helper';
 import { toastActions } from '../../store/toast-slice';
+import FormFieldSet from './FormFieldSet';
 
 const initialValues = {
   firstName: '',
@@ -36,6 +37,44 @@ const validations = {
     validator: 'validatePhone'
   }
 };
+
+const fieldSet = [
+  {
+    fieldSetLabel: 'Personal Info: ',
+    fields: [
+      {
+        inputName: 'firstName',
+        inputLabel: 'First Name',
+        inputType: 'text'
+      },
+      {
+        inputName: 'lastName',
+        inputLabel: 'Last Name',
+        inputType: 'text'
+      },
+      {
+        inputName: 'birthDate',
+        inputLabel: 'Birth Date',
+        inputType: 'date'
+      }
+    ]
+  },
+  {
+    fieldSetLabel: 'Contact Info: ',
+    fields: [
+      {
+        inputName: 'email',
+        inputLabel: 'Email address',
+        inputType: 'email'
+      },
+      {
+        inputName: 'phone',
+        inputLabel: 'Phone',
+        inputType: 'tel'
+      }
+    ]
+  }
+];
 
 const UserForm = () => {
   const { userId } = useParams();
@@ -83,15 +122,6 @@ const UserForm = () => {
     onSubmit
   });
 
-  const { firstName, lastName, birthDate, email, phone } = data;
-  const {
-    firstName: firstNameError,
-    lastName: lastNameError,
-    birthDate: birthDateError,
-    email: emailError,
-    phone: phoneError
-  } = error;
-
   if (loading) {
     return (
       <div
@@ -106,88 +136,15 @@ const UserForm = () => {
 
   return (
     <form className="container-md mt-3" onSubmit={handleSubmit}>
-      <fieldset className="row mb-3 container">
-        <legend>Personal Info: </legend>
-        <div className="row mb-3">
-          <div className="col-6">
-            <label htmlFor="firstName" className="form-label">
-              First Name
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="firstName"
-              name="firstName"
-              value={firstName}
-              onChange={handleChange}
-            />
-            {firstNameError && <p className="error">{firstNameError}</p>}
-          </div>
-          <div className="col-6">
-            <label htmlFor="lastName" className="form-label">
-              Last Name
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              id="lastName"
-              name="lastName"
-              value={lastName}
-              onChange={handleChange}
-            />
-            {lastNameError && <p className="error">{lastNameError}</p>}
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-6">
-            <label htmlFor="birthDate" className="form-label">
-              Birth Date
-            </label>
-            <input
-              type="date"
-              className="form-control"
-              id="birthDate"
-              name="birthDate"
-              value={birthDate}
-              onChange={handleChange}
-            />
-            {birthDateError && <p className="error">{birthDateError}</p>}
-          </div>
-        </div>
-      </fieldset>
-      <fieldset className="row mb-3 container">
-        <legend>Contact Info: </legend>
-        <div className="row">
-          <div className="col-6">
-            <label htmlFor="email" className="form-label">
-              Email address
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              id="email"
-              value={email}
-              name="email"
-              onChange={handleChange}
-            />
-            {emailError && <p className="error">{emailError}</p>}
-          </div>
-          <div className="col-6">
-            <label htmlFor="phone" className="form-label">
-              Phone
-            </label>
-            <input
-              type="tel"
-              className="form-control"
-              id="phone"
-              name="phone"
-              value={phone}
-              onChange={handleChange}
-            />
-            {phoneError && <p className="error">{phoneError}</p>}
-          </div>
-        </div>
-      </fieldset>
+      {fieldSet.map((set, index) => (
+        <FormFieldSet
+          {...set}
+          key={index}
+          inputValues={data}
+          errorMess={error}
+          handleChange={handleChange}
+        />
+      ))}
       <div className="row container">
         <div className="col-6">
           <button type="submit" className="btn btn-primary">

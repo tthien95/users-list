@@ -120,22 +120,21 @@ nav {
     display: block;
   }
   nav {
-    float: none;
+    width: 100%;
     max-height: 0;
     overflow: hidden;
     padding: $nav-height 0 15px;
     transition: max-height 0.4s ease-in-out;
-    ul {
-      li {
-        float: none;
-        a {
-          padding: 15px;
-          line-height: 20px;
 
-          &.nav-active::before,
-          &:hover::before {
-            width: 20%;
-          }
+    ul li {
+      float: none;
+      a {
+        padding: 15px;
+        line-height: 20px;
+
+        &.nav-active::before,
+        &:hover::before {
+          width: 20%;
         }
       }
     }
