@@ -1,21 +1,44 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import styles from './Navigation.module.scss';
 
+const activeStyle = ({ isActive }) =>
+  isActive ? styles['nav-active'] : undefined;
+
+const menuButtonHandler = (event) => {
+  event.preventDefault();
+  let anchor = document.getElementById(styles[`nav-toggle`]);
+  let navBar = document.getElementById('navbar');
+  anchor.classList.toggle(styles.active);
+  navBar.classList.toggle(styles.expand);
+};
 export default function Navigation() {
   return (
-    <nav className="navbar px-2 navbar-expand-lg navbar-dark bg-dark">
-      <ul className="navbar-nav">
-        <li className="nav-item">
-          <NavLink className="nav-link" to="/">
-            Home
-          </NavLink>
-        </li>
-        <li className="nav-item">
-          <NavLink className="nav-link" to="/new-user">
-            Add User
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
+    <header>
+      <div className={`${styles.wrap}`}>
+        <div className={`${styles.logo}`}>
+          <a href="#!">Web Logo</a>
+        </div>
+        <div className={styles[`nav-mobile`]}>
+          <a id={styles[`nav-toggle`]} href="#!" onClick={menuButtonHandler}>
+            <span></span>
+          </a>
+        </div>
+        <nav id="navbar" className={styles[`nav-container`]}>
+          <ul>
+            <li>
+              <NavLink to="/" className={activeStyle}>
+                Home
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/new-user" className={activeStyle}>
+                Add User
+              </NavLink>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
   );
 }
