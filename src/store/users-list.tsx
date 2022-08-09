@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { toastActions } from './toast-slice';
+import { User, UsersListContextType } from '../type/user';
+import { AxiosError } from 'axios';
 
-const UsersListContext = React.createContext({
+const UsersListContext = React.createContext<UsersListContextType>({
   usersList: [],
   setUsersList: () => {},
   isLoading: false,
@@ -13,19 +15,30 @@ const UsersListContext = React.createContext({
   fnHandleError: () => {}
 });
 
-export const UserContextProvider = (props) => {
-  const [usersList, setUsersList] = useState([]);
+type ErrorDataRes = {
+  message: string;
+};
+
+const doesDataContainMessage = (data: unknown): data is ErrorDataRes => {
+  return typeof data === 'object' && data !== null && 'message' in data;
+};
+
+export const UserContextProvider: React.FC<React.PropsWithChildren> = ({
+  children
+}) => {
+  const [usersList, setUsersList] = useState<User[] | []>([]);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
 
   const fnHandleError = useCallback(
-    ({ response }) => {
+    ({ response }: AxiosError) => {
       dispatch(
         toastActions.showNotification({
           status: 'error',
           title: 'Error',
           message:
-            response?.data?.message ||
+            (doesDataContainMessage(response?.data) &&
+              response?.data.message) ||
             response?.statusText ||
             'There is something wrong happended while fetching data'
         })
@@ -34,13 +47,13 @@ export const UserContextProvider = (props) => {
     [dispatch]
   );
 
-  const addUser = (value) => {
+  const addUser = (value: User) => {
     let currUsersList = [...usersList];
     currUsersList.unshift(value);
     setUsersList(currUsersList);
   };
 
-  const updateUser = (value) => {
+  const updateUser = (value: User) => {
     let currUsersList = [...usersList];
     // eslint-disable-next-line eqeqeq
     const userIndx = currUsersList.findIndex(({ id }) => id == value.id);
@@ -50,7 +63,7 @@ export const UserContextProvider = (props) => {
     }
   };
 
-  const deleteUser = (userId) => {
+  const deleteUser = (userId: string) => {
     let currUsersList = [...usersList];
     // eslint-disable-next-line eqeqeq
     const userIndx = currUsersList.findIndex(({ id }) => id == userId);
@@ -73,7 +86,7 @@ export const UserContextProvider = (props) => {
         fnHandleError
       }}
     >
-      {props.children}
+      {children}
     </UsersListContext.Provider>
   );
 };

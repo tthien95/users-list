@@ -2,15 +2,15 @@ import React, { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import classes from './Toast.module.scss';
-import { toastActions } from '../../store/toast-slice';
+import { toastActions, ToastState } from '../../store/toast-slice';
 
-const notiStatus = {
-  success: '#5cb85c',
-  error: '#d9534f'
+enum notiStatus {
+  success = '#5cb85c',
+  error = '#d9534f'
 };
 
 const Toast = () => {
-  const notification = useSelector((state) => state.notification);
+  const notification = useSelector((state: ToastState) => state.notification);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Toast = () => {
     </div>
   );
 
-  return createPortal(content, document.getElementById('toastNoti'));
+  return createPortal(content, document.getElementById('toastNoti')!);
 };
 
 export default Toast;
