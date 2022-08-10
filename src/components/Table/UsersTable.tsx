@@ -2,7 +2,8 @@ import React, { useContext, useEffect } from 'react';
 import UsersTableEntries from './UsersTableEntries';
 import UsersListContext from '../../store/users-list';
 import { get } from '../../utils/api-helper';
-import { User } from '../../type/user'
+import { User } from '../../type/user';
+import { AxiosResponse } from 'axios';
 
 const UsersTable = () => {
   const { setIsLoading, usersList, setUsersList, fnHandleError } =
@@ -11,8 +12,8 @@ const UsersTable = () => {
   useEffect(() => {
     setIsLoading(true);
     get('/users')
-      .then((res) => {
-        const usersList: User[] = res.data.users;
+      .then((res: AxiosResponse<{ users: User[] }>) => {
+        const usersList = res.data.users;
         setUsersList(usersList);
       }, fnHandleError)
       .finally(() => {
