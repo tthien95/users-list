@@ -1,11 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+type notification = {
+  status: 'success' | 'error';
+  title: string;
+  message: string;
+};
 
 export interface ToastState {
-  notification: {
-    status: 'success' | 'error';
-    title: string;
-    message: string;
-  } | null;
+  notification: notification | null;
 }
 
 const initialState: ToastState = { notification: null };
@@ -14,7 +16,7 @@ const toastSlice = createSlice({
   name: 'toast',
   initialState,
   reducers: {
-    showNotification: (state, action) => {
+    showNotification: (state, action: PayloadAction<notification>) => {
       const { status, title, message } = action.payload;
       state.notification = { status, title, message };
     },

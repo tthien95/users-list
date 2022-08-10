@@ -1,15 +1,24 @@
 import React from 'react';
 import FormInput from './FormInput';
+import { FormFields, FieldElement } from '../../type/form';
 
-export default function FormFieldSet({
+interface FormFieldSetProps {
+  fieldSetLabel: string;
+  fields: FieldElement[];
+  inputValues: FormFields | {};
+  errorMess: any;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+}
+
+const FormFieldSet: React.FC<FormFieldSetProps> = ({
   fieldSetLabel,
   fields,
   inputValues,
   errorMess,
   handleChange
-}) {
+}) => {
   let chunk = [];
-  let newFields = [].concat(...fields);
+  let newFields = ([] as FieldElement[]).concat(...fields);
 
   while (newFields.length) {
     chunk.push(newFields.splice(0, 2));
@@ -24,7 +33,7 @@ export default function FormFieldSet({
               <FormInput
                 {...val}
                 key={`${rowIndex}-${colIndex}`}
-                inputValue={inputValues[val.inputName]}
+                inputValue={(inputValues as any)[val.inputName]}
                 inputError={errorMess[val.inputName]}
                 handleChange={handleChange}
               />
@@ -34,4 +43,6 @@ export default function FormFieldSet({
       })}
     </fieldset>
   );
-}
+};
+
+export default FormFieldSet;

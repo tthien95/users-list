@@ -2,13 +2,13 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import styles from './Navigation.module.scss';
 
-const activeStyle = ({ isActive }) =>
+const activeStyle = ({ isActive }: { isActive: boolean }) =>
   isActive ? styles['nav-active'] : undefined;
 
-const menuButtonHandler = (event) => {
+const menuButtonHandler = (event: React.MouseEvent) => {
   event.preventDefault();
-  let anchor = document.getElementById(styles[`nav-toggle`]);
-  let navBar = document.getElementById('navbar');
+  let anchor = document.getElementById(styles[`nav-toggle`])!;
+  let navBar = document.getElementById('navbar')!;
   anchor.classList.toggle(styles.active);
   navBar.classList.toggle(styles.expand);
 };

@@ -6,8 +6,11 @@ import UsersListContext from '../../store/users-list';
 import { post, put } from '../../utils/api-helper';
 import { toastActions } from '../../store/toast-slice';
 import FormFieldSet from './FormFieldSet';
+import { AxiosResponse } from 'axios';
+import { FormFields, FieldSet } from '../../type/form';
+import { User } from '../../type/user';
 
-const initialValues = {
+const initialValues: FormFields = {
   firstName: '',
   lastName: '',
   birthDate: '',
@@ -38,7 +41,7 @@ const validations = {
   }
 };
 
-const fieldSet = [
+const fieldSet: FieldSet[] = [
   {
     fieldSetLabel: 'Personal Info: ',
     fields: [
@@ -84,7 +87,11 @@ const UserForm = () => {
   const navigate = useNavigate();
 
   const fnSuccess = useCallback(
-    (res, ctxHandler, message) => {
+    (
+      res: AxiosResponse<User>,
+      ctxHandler: (e: any) => void,
+      message: string
+    ) => {
       const { id, image, email, birthDate, phone, firstName, lastName } =
         res.data;
       ctxHandler({ id, image, email, birthDate, phone, firstName, lastName });

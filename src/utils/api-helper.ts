@@ -14,6 +14,6 @@ export const put = (url: string, body: any) => {
   return axios.put(baseUrl + url, body);
 };
 
-export const deleteReq = (url: string, body: any) => {
+export const deleteReq = (url: string, body: any = {} ) => {
   return axios.delete(baseUrl + url, body);
 };

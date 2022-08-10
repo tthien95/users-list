@@ -4,16 +4,17 @@ import { Link } from 'react-router-dom';
 import UsersListContext from '../../store/users-list';
 import { deleteReq } from '../../utils/api-helper';
 import { toastActions } from '../../store/toast-slice';
+import { User } from '../../type/user';
 
 const dateFormat = new Intl.DateTimeFormat(undefined, { dateStyle: 'long' });
 
-const TableEntries = ({ usersData }) => {
+const TableEntries: React.FC<{ usersData: User[] }> = ({ usersData }) => {
   const { deleteUser, isLoading, setIsLoading, fnHandleError } =
     useContext(UsersListContext);
   const dispatch = useDispatch();
 
   const handleDelete = useCallback(
-    (userId) => {
+    (userId: string) => {
       setIsLoading(true);
       deleteReq(`/users/${userId}`)
         .then(() => {
@@ -36,7 +37,7 @@ const TableEntries = ({ usersData }) => {
   if (usersData.length === 0 || isLoading) {
     return (
       <tr>
-        <td colSpan="8" className="text-center">
+        <td colSpan={8} className="text-center">
           {isLoading ? (
             <div
               className="spinner-border"
@@ -55,34 +56,38 @@ const TableEntries = ({ usersData }) => {
     );
   }
 
-  return usersData.map(
-    ({ id, image, email, birthDate, phone, firstName, lastName }) => {
-      return (
-        <tr key={id}>
-          <th scope="row" className="align-middle">
-            {id}
-          </th>
-          <td className="align-middle" style={{ width: '10rem' }}>
-            <img className="rounded-circle w-50" src={image} alt={image} />
-          </td>
-          <td className="align-middle">
-            {dateFormat.format(new Date(birthDate))}
-          </td>
-          <td className="align-middle">{phone}</td>
-          <td className="align-middle">{email}</td>
-          <td className="align-middle">{firstName}</td>
-          <td className="align-middle">{lastName}</td>
-          <td className="align-middle">
-            <div className="d-flex justify-content-between">
-              <Link to={`/user/${id}`}>
-                <button>Edit</button>
-              </Link>
-              <button onClick={() => handleDelete(id)}>Delete</button>
-            </div>
-          </td>
-        </tr>
-      );
-    }
+  return (
+    <>
+      {usersData.map(
+        ({ id, image, email, birthDate, phone, firstName, lastName }) => {
+          return (
+            <tr key={id}>
+              <th scope="row" className="align-middle">
+                {id}
+              </th>
+              <td className="align-middle" style={{ width: '10rem' }}>
+                <img className="rounded-circle w-50" src={image} alt={image} />
+              </td>
+              <td className="align-middle">
+                {dateFormat.format(new Date(birthDate))}
+              </td>
+              <td className="align-middle">{phone}</td>
+              <td className="align-middle">{email}</td>
+              <td className="align-middle">{firstName}</td>
+              <td className="align-middle">{lastName}</td>
+              <td className="align-middle">
+                <div className="d-flex justify-content-between">
+                  <Link to={`/user/${id}`}>
+                    <button>Edit</button>
+                  </Link>
+                  <button onClick={() => handleDelete(id)}>Delete</button>
+                </div>
+              </td>
+            </tr>
+          );
+        }
+      )}
+    </>
   );
 };
 

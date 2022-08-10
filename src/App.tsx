@@ -13,9 +13,9 @@ const App = () => {
       <Navigation />
       <UserContextProvider>
         <Routes>
-          <Route path="/" element={<UsersTable />} exact />
-          <Route path="new-user" element={<UserForm />} exact />
-          <Route path="user/:userId" element={<UserForm />} exact />
+          <Route path="/" element={<UsersTable />} />
+          <Route path="new-user" element={<UserForm />} />
+          <Route path="user/:userId" element={<UserForm />} />
         </Routes>
       </UserContextProvider>
     </>

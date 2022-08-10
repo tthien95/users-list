@@ -15,14 +15,6 @@ const UsersListContext = React.createContext<UsersListContextType>({
   fnHandleError: () => {}
 });
 
-type ErrorDataRes = {
-  message: string;
-};
-
-const doesDataContainMessage = (data: unknown): data is ErrorDataRes => {
-  return typeof data === 'object' && data !== null && 'message' in data;
-};
-
 export const UserContextProvider: React.FC<React.PropsWithChildren> = ({
   children
 }) => {
@@ -31,14 +23,13 @@ export const UserContextProvider: React.FC<React.PropsWithChildren> = ({
   const dispatch = useDispatch();
 
   const fnHandleError = useCallback(
-    ({ response }: AxiosError) => {
+    ({ response }: AxiosError<{ message: string }>) => {
       dispatch(
         toastActions.showNotification({
           status: 'error',
           title: 'Error',
           message:
-            (doesDataContainMessage(response?.data) &&
-              response?.data.message) ||
+            response?.data.message ||
             response?.statusText ||
             'There is something wrong happended while fetching data'
         })

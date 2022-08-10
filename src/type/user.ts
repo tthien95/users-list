@@ -18,5 +18,5 @@ export type UsersListContextType = {
   updateUser: (user: User) => void;
   deleteUser: (id: string) => void;
   setIsLoading: (b: boolean) => void;
-  fnHandleError: (res: AxiosError) => void;
+  fnHandleError: (res: AxiosError<{ message: string }>) => void;
 };
