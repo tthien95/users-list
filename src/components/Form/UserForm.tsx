@@ -9,6 +9,7 @@ import FormFieldSet from './FormFieldSet';
 import { AxiosResponse } from 'axios';
 import { FormFields, FieldSet } from '../../type/form';
 import { User } from '../../type/user';
+import { Validations } from '../../utils/validation';
 
 const initialValues: FormFields = {
   firstName: '',
@@ -18,7 +19,7 @@ const initialValues: FormFields = {
   phone: ''
 };
 
-const validations = {
+const validations: Validations = {
   firstName: {
     required: true,
     validator: 'validateNoSpecialChar'

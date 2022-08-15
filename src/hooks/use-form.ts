@@ -4,14 +4,15 @@ import validators from '../utils/validation';
 import { useDispatch } from 'react-redux';
 import { toastActions } from '../store/toast-slice';
 import { useNavigate } from 'react-router-dom';
-import { FormFields, ValidationProps } from '../type/form';
+import { FormFields } from '../type/form';
+import { Validations } from '../utils/validation';
 import { User } from '../type/user';
 import { AxiosError, AxiosResponse } from 'axios';
 
 interface UseFromProps {
   initialValues: FormFields | {};
   userId: string | undefined;
-  validations: unknown;
+  validations: Validations;
   onSubmit: () => Promise<void>;
 }
 
@@ -91,8 +92,8 @@ export const useForm = ({
 
       for (const key in validations) {
         if (Object.hasOwnProperty.call(validations, key)) {
-          const validation: ValidationProps = (validations as any)[key];
-          const value = (data as any)[key];
+          const validation = validations[key];
+          const value = (data as FormFields)[key];
 
           if (validation.required && !value) {
             valid = false;
@@ -101,7 +102,7 @@ export const useForm = ({
 
           if (!newError[key] && value && validation.validator) {
             const { isValid, message } =
-              (validators as any)[validation.validator](value);
+              validators[validation.validator](value);
             valid = isValid;
             if (!isValid) {
               newError[key] = message;

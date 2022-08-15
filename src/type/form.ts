@@ -1,11 +1,7 @@
 import { HTMLInputTypeAttribute } from 'react';
 
 export interface FormFields {
-  firstName: string;
-  lastName: string;
-  birthDate: string;
-  email: string;
-  phone: string;
+  [field: string]: string;
 }
 
 export type FieldElement = {
@@ -17,9 +13,4 @@ export type FieldElement = {
 export interface FieldSet {
   fieldSetLabel: string;
   fields: FieldElement[];
-}
-
-export interface ValidationProps {
-  required: boolean;
-  validator: string;
 }
